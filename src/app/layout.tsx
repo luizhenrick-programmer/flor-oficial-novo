@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CartSync } from "@/components/cart-sync";
 import { ShopOnly } from "@/components/shop-only";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Flor Oficial | Moda feminina midsize e plus size",
@@ -40,6 +41,7 @@ export default function RootLayout({
           <SiteFooter />
           <CartSync />
         </ShopOnly>
+        <Analytics />
       </body>
     </html>
   );
