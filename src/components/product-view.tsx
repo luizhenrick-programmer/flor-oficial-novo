@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { addToCart } from "@/utils/cart";
 import { formatBRL, installmentLabel } from "@/utils/format";
 import type { ProductDetail } from "@/utils/products";
 
@@ -25,6 +27,7 @@ export function ProductView({ product }: { product: ProductDetail }) {
   );
   const [size, setSize] = useState<string | null>(null);
   const [index, setIndex] = useState(0);
+  const [added, setAdded] = useState(false);
 
   // Variações da cor escolhida (ou todas, enquanto nenhuma cor foi escolhida)
   const pool = variants.filter((v) => !color || v.color === color);
@@ -84,6 +87,22 @@ export function ProductView({ product }: { product: ProductDetail }) {
   const whatsappHref = WHATSAPP
     ? `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`
     : null;
+
+  function handleAdd() {
+    if (!variant || variant.stock <= 0) return;
+    addToCart({
+      variantId: variant.id,
+      slug: product.slug,
+      name: product.name,
+      color: variant.color,
+      size: variant.size,
+      price: variant.price,
+      imageUrl: current?.url ?? null,
+      quantity: 1,
+      maxStock: variant.stock,
+    });
+    setAdded(true);
+  }
 
   return (
     <div className="grid gap-10 md:grid-cols-2 lg:gap-20">
@@ -190,22 +209,41 @@ export function ProductView({ product }: { product: ProductDetail }) {
         {note && <p className="mt-5 text-sm text-primary">{note}</p>}
 
         {whatsappHref && (
-          <div className="mt-8">
+          <div className="mt-4">
             <a
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary w-full"
+              className="btn-outline w-full"
             >
               {soldOutAll ? "Avise-me quando chegar" : "Chamar no WhatsApp"}
             </a>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              Tire dúvidas ou faça seu pedido com a nossa equipe.
+              Tire dúvidas com a nossa equipe.
             </p>
           </div>
         )}
 
-        {/* TODO: botão "Adicionar à sacola" entra aqui quando a sacola existir (usar variant.id) */}
+        {!soldOutAll && (
+          <div className="mt-8">
+            <button
+              type="button"
+              onClick={handleAdd}
+              disabled={!variant}
+              className="btn-primary w-full"
+            >
+              {variant ? "Adicionar à sacola" : "Escolha cor e tamanho"}
+            </button>
+            {added && (
+              <p role="status" className="mt-3 text-center text-sm text-primary">
+                Adicionado à sacola.{" "}
+                <Link href="/sacola" className="link-underline pb-0.5">
+                  Ver sacola
+                </Link>
+              </p>
+            )}
+          </div>
+        )}
 
         {product.description && (
           <div className="mt-10 border-t border-border pt-8">

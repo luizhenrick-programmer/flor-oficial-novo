@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { CartSync } from "@/components/cart-sync";
+import { ShopOnly } from "@/components/shop-only";
 
 export const metadata: Metadata = {
   title: "Flor Oficial | Moda feminina midsize e plus size",
@@ -15,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" data-scroll-behavior="smooth">
       <head>
         {/* O globals.css usa os nomes literais das fontes, então carregamos via Google Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -30,9 +32,14 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <SiteHeader />
+        <ShopOnly>
+          <SiteHeader />
+        </ShopOnly>
         {children}
-        <SiteFooter />
+        <ShopOnly>
+          <SiteFooter />
+          <CartSync />
+        </ShopOnly>
       </body>
     </html>
   );
